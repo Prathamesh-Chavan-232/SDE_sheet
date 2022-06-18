@@ -81,8 +81,6 @@ void setZeros(vector<vector<int>> &matrix)
                 debug(i);
                 debug(j);
                 pr.pb({i, j});
-                flag = true;
-                break;
             }
         }
     }
@@ -90,7 +88,7 @@ void setZeros(vector<vector<int>> &matrix)
     
     for (int i = 0; i < sz; ++i)
     {
-        auto [zero_i, zero_j] = pr[i];
+        int zero_i = pr[i].first, zero_j = pr[i].second;
         for (int row = 0; row < n; ++row)
         {
             matrix[row][zero_j] = 0;
