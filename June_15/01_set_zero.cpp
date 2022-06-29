@@ -46,7 +46,8 @@ template <typename T>
 void _print(T const &c) // print any STL container
 {
     cout << "{";
-    foreach(it, c) cout << *it << ", ";
+    foreach (it, c)
+        cout << *it << ", ";
     cout << "}";
 }
 
@@ -65,44 +66,47 @@ const double PI = 3.1415926535897932384626;
 /*  Approach -
 
 */
-
-void setZeros(vector<vector<int>> &matrix)
+class Solution
 {
-    int n = matrix.size();
-    int m = matrix[0].size();
-    vpii pr;
-    for (int i = 0; i < n; ++i)
+public:
+    void setZeros(vector<vector<int>> &matrix)
     {
-        bool flag = false;
-        for (int j = 0; j < m; ++j)
+        int n = matrix.size();
+        int m = matrix[0].size();
+        vpii pr;
+        for (int i = 0; i < n; ++i)
         {
-            if (matrix[i][j] == 0)
+            bool flag = false;
+            for (int j = 0; j < m; ++j)
             {
-                debug(i);
-                debug(j);
-                pr.pb({i, j});
+                if (matrix[i][j] == 0)
+                {
+                    debug(i);
+                    debug(j);
+                    pr.pb({i, j});
+                }
             }
         }
-    }
-    int sz = pr.size();
-    
-    for (int i = 0; i < sz; ++i)
-    {
-        int zero_i = pr[i].first, zero_j = pr[i].second;
-        for (int row = 0; row < n; ++row)
+        int sz = pr.size();
+
+        for (int i = 0; i < sz; ++i)
         {
-            matrix[row][zero_j] = 0;
+            int zero_i = pr[i].first, zero_j = pr[i].second;
+            for (int row = 0; row < n; ++row)
+            {
+                matrix[row][zero_j] = 0;
+            }
+            for (int col = 0; col < m; ++col)
+            {
+                matrix[zero_i][col] = 0;
+            }
         }
-        for (int col = 0; col < m; ++col)
+        for (int i = 0; i < n; ++i)
         {
-            matrix[zero_i][col] = 0;
+            debcon(matrix[i]);
         }
     }
-    for (int i = 0; i < n; ++i)
-    {
-        debcon(matrix[i]);
-    }
-}
+};
 int main()
 {
     auto start = chrono::steady_clock::now();
