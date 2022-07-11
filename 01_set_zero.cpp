@@ -119,6 +119,7 @@ int main()
 #endif
     int n, m;
     cin >> n >> m;
+    Solution s;
     vvi matrix(n, vi(m));
     for (int i = 0; i < n; ++i)
     {
@@ -127,7 +128,7 @@ int main()
             cin >> matrix[i][j];
         }
     }
-    setZeros(matrix);
+    s.setZeros(matrix);
 
 #ifndef ONLINE_JUDGE
     auto end = chrono::steady_clock::now();
