@@ -83,46 +83,41 @@ bool vis[N];
 */
 /*  Approach -
 
-    Solution 1 - Counting
-               - count the number of 0s, 1s & 2s and fill the them in the array
-                 in the order  0s -> 1s -> 2s
-    Solution 2 - Sorting (not an expected solution)
-    Solution 3 - 3 pointer (DNF) -
-                         1) Keep 3 pointers low,mid and high
-                         2) low is for the zeros, high is for the twos & middle is the "unknown" region
-                         3) start at low = 0, high = nums.size() - 1 & mid = 0
-                         4) if nums[mid] == 0 swap it with low & increment mid & low
-                            low++ -> increasing the 0s region.
-                            mid++ -> Moving to next element
-                         5) if nums[mid] == 1, mid++ because 1s are supposed to be in the middle.
-                         6) if nums[mid] == 2, swap with high & high--, dont do mid++
-                            since after swapping mid_elem is a new number and can be any number(0,1,2).
-*/
+    Approach 1 - Cyclic sort 
+        1) the array is of n size and only consists of numbers 1 to n
+        
+        2) so a sorted array would look like arr[0] = 1, arr[1] = 2, arr[2] = 3, ....
+        
+        3) so if at any index arr[i] != i + 1, i.e element not at its "correct" index
+            we swap it with its correct index
+            but if arr[correct] == arr[i], we have a duplicate.
+ */
 
 class Solution
 {
 public:
-    void sortColors(vector<int> &nums)
+    int findDuplicate(vector<int> &nums)
     {
-        int low = 0, mid = 0, high = nums.size() - 1;
-        while (mid <= high)
+
+        for (int i = 0; i < nums.size(); i++)
         {
-            switch (nums[mid])
+            if (nums[i] != i + 1)
             {
-            case 0:
-                swap(nums[low++], nums[mid++]);
-                break;
-            case 1:
-                mid++;
-                break;
-            case 2:
-                swap(nums[high--], nums[mid]);
-                break;
+                int correct = nums[i] - 1;
+                if (nums[i] == nums[correct])
+                {
+                    return nums[i];
+                }
+                else
+                {
+                    swap(nums[i], nums[correct]);
+                }
             }
         }
+
+        return -1;
     }
 };
-
 void code()
 {
     Solution s;

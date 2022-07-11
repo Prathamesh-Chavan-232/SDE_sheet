@@ -83,42 +83,58 @@ bool vis[N];
 */
 /*  Approach -
 
-    Solution 1 - Counting
-               - count the number of 0s, 1s & 2s and fill the them in the array
-                 in the order  0s -> 1s -> 2s
-    Solution 2 - Sorting (not an expected solution)
-    Solution 3 - 3 pointer (DNF) -
-                         1) Keep 3 pointers low,mid and high
-                         2) low is for the zeros, high is for the twos & middle is the "unknown" region
-                         3) start at low = 0, high = nums.size() - 1 & mid = 0
-                         4) if nums[mid] == 0 swap it with low & increment mid & low
-                            low++ -> increasing the 0s region.
-                            mid++ -> Moving to next element
-                         5) if nums[mid] == 1, mid++ because 1s are supposed to be in the middle.
-                         6) if nums[mid] == 2, swap with high & high--, dont do mid++
-                            since after swapping mid_elem is a new number and can be any number(0,1,2).
 */
-
 class Solution
 {
 public:
-    void sortColors(vector<int> &nums)
+    void merge(vector<int> &nums1, int m, vector<int> &nums2, int n)
     {
-        int low = 0, mid = 0, high = nums.size() - 1;
-        while (mid <= high)
+        nums1.insert(nums1.end(), all(nums2));
+        cout << "lol";
+        int gap = ceil((n + m) / 2.0);
+        int i = 0, j = i + gap;
+        while (gap >= 1)
         {
-            switch (nums[mid])
+            if (i >= m || j >= n)
             {
-            case 0:
-                swap(nums[low++], nums[mid++]);
-                break;
-            case 1:
-                mid++;
-                break;
-            case 2:
-                swap(nums[high--], nums[mid]);
-                break;
+                gap /= 2;
+                i = 0;
+                j = i + gap;
             }
+            if (nums1[i] > nums2[j])
+            {
+                swap(nums1[i], nums2[j]);
+            }
+            i++;
+            j++;
+        }
+    }
+};
+class Solution2
+{
+public:
+    void insert(vector<int> &arr, int value, int index, int size)
+    {
+        for (int i = size - 1; i >= index; i--)
+        {
+            arr[i + 1] = arr[i];
+        }
+        arr[index] = value;
+    }
+    void merge(vector<int> &nums1, int m, vector<int> &nums2, int n)
+    {
+        int i = 0, j = 0;
+        while (i < m && j < n)
+        {
+            if (nums1[i] < nums2[j])
+            {
+                insert(nums1, nums2[j++], i + 1, m);
+            }
+            i++;
+        }
+        while (j < n)
+        {
+            nums1[i++] = nums2[j++];
         }
     }
 };
@@ -127,16 +143,25 @@ void code()
 {
     Solution s;
 
+    int m;
+    cin >> m;
+    vi nums1(m);
+    for (int i = 0; i < m; ++i)
+    {
+        cin >> nums1[i];
+    }
     int n;
     cin >> n;
-    vi arr(n);
+    vi nums2(n);
     for (int i = 0; i < n; ++i)
     {
-        cin >> arr[i];
+        cin >> nums2[i];
     }
-
-    int res; // store return value
-    cout << res << endl;
+    s.merge(nums1, m, nums2, n);
+    for (int i = 0; i < nums1.size(); ++i)
+    {
+        cout << nums1[i] << " ";
+    }
 }
 int main()
 {
