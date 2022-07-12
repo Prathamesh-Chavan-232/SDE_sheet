@@ -83,85 +83,146 @@ bool vis[N];
 */
 /*  Approach -
 
+        Approach 3 -
+            1) Initially take the gap as (m+n)/2;
+            2) Take as a pt1 = 0 and pt2 = gap.
+            3) Run a loop while pt2 < m + n and whenever arr[pt1] > arr[pt2], swap those.
+            4) After completion of the loop reduce the gap as gap = ceil(gap/2).
+            5) Repeat the process until gap is 1,
+               if gap is 1 dont do gap = ceil(gap/2) (it will always be 1) Instead exit the loop.
+
 */
 class Solution
 {
 public:
     void merge(vector<int> &nums1, int m, vector<int> &nums2, int n)
     {
-        nums1.insert(nums1.end(), all(nums2));
-        cout << "lol";
-        int gap = ceil((n + m) / 2.0);
-        int i = 0, j = i + gap;
-        while (gap >= 1)
+        for (int i = m; i < n + m; i++)
         {
-            if (i >= m || j >= n)
+            nums1[i] = nums2[i - m];
+        }
+        debcon(nums1);
+        int gap = ceil((m + n) / 2.0);
+        int i = 0, j = i + gap;
+        while (gap)
+        {
+            debug(gap);
+            i = 0;
+            j = i + gap;
+            while (j < (m + n))
             {
-                gap /= 2;
-                i = 0;
-                j = i + gap;
+                if (nums1[i] > nums1[j])
+                {
+                    debug(i, j, nums1[i], nums1[j]);
+                    swap(nums1[i], nums1[j]);
+                }
+                i++;
+                j++;
             }
-            if (nums1[i] > nums2[j])
-            {
-                swap(nums1[i], nums2[j]);
-            }
-            i++;
-            j++;
+            if (gap == 1)
+                gap = 0;
+            else
+                gap = ceil(gap / 2.0);
         }
     }
 };
+// Not the best approach, but O(1) space.
+class Solution1
+{
+public:
+    void merge(int arr1[], int arr2[], int n, int m)
+    {
+        // code here
+        int i, k;
+        for (i = 0; i < n; i++)
+        {
+            // take first element from arr1
+            // compare it with first element of second array
+            // if condition match, then swap
+            if (arr1[i] > arr2[0])
+            {
+                int temp = arr1[i];
+                arr1[i] = arr2[0];
+                arr2[0] = temp;
+            }
+
+            // then sort the second array
+            // put the element in its correct position
+            // so that next cycle can swap elements correctly
+            int first = arr2[0];
+            // insertion sort is used here
+            for (k = 1; k < m && arr2[k] < first; k++)
+            {
+                arr2[k - 1] = arr2[k];
+            }
+            arr2[k - 1] = first;
+        }
+    }
+};
+// Using 3rd array
 class Solution2
 {
 public:
-    void insert(vector<int> &arr, int value, int index, int size)
+    void insertAtindex(vector<int> &arr, int value, int index)
     {
-        for (int i = size - 1; i >= index; i--)
+        int n = arr.size();
+        for (int i = n - 2; i >= index; --i)
         {
             arr[i + 1] = arr[i];
         }
         arr[index] = value;
     }
+
     void merge(vector<int> &nums1, int m, vector<int> &nums2, int n)
     {
-        int i = 0, j = 0;
-        while (i < m && j < n)
+
+        vector<int> res(m + n);
+        int i = 0, j = 0, k = 0;
+        while ((i < m) && (j < n))
         {
             if (nums1[i] < nums2[j])
-            {
-                insert(nums1, nums2[j++], i + 1, m);
-            }
-            i++;
+                res[k] = nums1[i++];
+            else
+                res[k] = nums2[j++];
+            k++;
         }
+        while (i < m)
+        {
+            res[k] = nums1[i];
+            i++;
+            k++;
+        }
+
         while (j < n)
         {
-            nums1[i++] = nums2[j++];
+            res[k] = nums2[j];
+            j++;
+            k++;
         }
+        nums1 = res;
     }
 };
+
 
 void code()
 {
     Solution s;
 
-    int m;
-    cin >> m;
-    vi nums1(m);
+    int m, n;
+    cin >> m >> n;
+    vi nums1(m + n), nums2(n);
     for (int i = 0; i < m; ++i)
     {
         cin >> nums1[i];
     }
-    int n;
-    cin >> n;
-    vi nums2(n);
-    for (int i = 0; i < n; ++i)
+    for (int j = 0; j < n; ++j)
     {
-        cin >> nums2[i];
+        cin >> nums2[j];
     }
+    debcon(nums1);
+    debcon(nums2);
     s.merge(nums1, m, nums2, n);
-    for (int i = 0; i < nums1.size(); ++i)
-    {
-        cout << nums1[i] << " ";
-    }
+    debcon(nums1);
 }
 int main()
 {
