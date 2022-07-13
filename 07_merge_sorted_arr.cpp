@@ -86,7 +86,7 @@ bool vis[N];
         Approach 3 -
             1) Initially take the gap as (m+n)/2;
             2) Take as a pt1 = 0 and pt2 = gap.
-            3) Run a loop while pt2 < m + n and whenever arr[pt1] > arr[pt2], swap those.
+            3) Run a loop while pt2 < m + n and whenever nums1[pt1] > nums1[pt2], swap those.
             4) After completion of the loop reduce the gap as gap = ceil(gap/2).
             5) Repeat the process until gap is 1,
                if gap is 1 dont do gap = ceil(gap/2) (it will always be 1) Instead exit the loop.
@@ -126,8 +126,48 @@ public:
         }
     }
 };
-// Not the best approach, but O(1) space.
+
 class Solution1
+{
+public:
+    void merge(vi &nums1, int m, vi &nums2, int n)
+    {
+        for (int i = m; i < n + m; i++)
+        {
+            nums1[i] = nums2[i - m];
+        }
+        debcon(nums1);
+        int l = 0, mid = m, h = m + n;
+        vi temp(h + 1);
+        int i = 0, j = mid + 1, k = 0;
+        while (i <= mid && j <= h) // Mergeing the elements in stored order
+        {
+            if (nums1[i] < nums1[j])
+            {
+                temp[k] = nums1[i++];
+            }
+            else
+            {
+                temp[k] = nums1[j++];
+            }
+            k++;
+        }
+        while (i <= mid) // if elements are remaining from left subarray
+        {
+            temp[k++] = nums1[i++];
+        }
+        while (j <= h) // if elements are remaining from right subarray
+        {
+            temp[k++] = nums1[j++];
+        }
+        for (int i = 0; i < (h + 1); i++) // storing sorted elements in orignal array again
+        {
+            nums1[i] = temp[i];
+        }
+    }
+};
+// Not the best approach, but O(1) space.
+class Solution2
 {
 public:
     void merge(int arr1[], int arr2[], int n, int m)
@@ -160,17 +200,17 @@ public:
     }
 };
 // Using 3rd array
-class Solution2
+class Solution3
 {
 public:
-    void insertAtindex(vector<int> &arr, int value, int index)
+    void insertAtindex(vector<int> &nums1, int value, int index)
     {
-        int n = arr.size();
+        int n = nums1.size();
         for (int i = n - 2; i >= index; --i)
         {
-            arr[i + 1] = arr[i];
+            nums1[i + 1] = nums1[i];
         }
-        arr[index] = value;
+        nums1[index] = value;
     }
 
     void merge(vector<int> &nums1, int m, vector<int> &nums2, int n)
@@ -203,10 +243,9 @@ public:
     }
 };
 
-
 void code()
 {
-    Solution s;
+    Solution1 s;
 
     int m, n;
     cin >> m >> n;
