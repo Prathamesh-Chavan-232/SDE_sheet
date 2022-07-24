@@ -38,7 +38,7 @@ void inVec(vector<int> &v)
             continue;
         if (s[i] == '-')
             sign = -1;
-        else if (s[i] == ',' || s[i] == ' ')
+        else if (s[i] == ',')
             v.push_back(num), num = 0;
         else
         {
@@ -99,98 +99,93 @@ vpii graph[N]; // For Adjacency List
 bool vis[N];
 
 /*
-    Link -
-    Problem -
-    Difficulty -
-    topic -
-    Status -
-    Date -
+    Link - https://leetcode.com/problems/rotate-image/
+    Problem - SDE sheet Day 2
+    Difficulty - medium
+    Topic - Arrays
+    Status - Solved
+    Date - 24/7/22
 */
 /*  Approach -
+        Brute force - T.C - O(n^2) S.C - O(n^2)
+            Create a 2nd matrix rotated of the same size and assign the 1st row of matrix to last column of rotated,
+            2nd row to 2nd last column and so on...
 
-        Brute force - Calculate the sum of every subarray & compute the maximum sum.
+        Better - T.C - O(n^2) S.C - O(1)
+            By observation we can see that the result required can be obtained by reversing each row of the transpose matrix
+            We will do the transpose in-place
 
-                | _ | _ | _ | _ | _ |  -> suppose this the array
-                  0   1   2   3   4
-        start -> i, j
-                 iterate i through the array & for every i, iterate j through the array
-                 and calculate sum += a[j] (so sum = a[0], a[0] + a[1], a[0] + a[1] + a[2]... and so on)
-
-        Optimal - Kadane's algorithm
-                1) Logic of the algorithm is the keep calculating the sum of the subarray which yeilds us a positive sum
-
-                2) If a sum is positive even tho its subarray has -ve numbers
-                   we keep calculating and comparing it with maxSum
-
-                3) if the sum is negative. we change it to 0
-
-                4) This way we will definitely go through the required subarray & set the maxSum which wont be affected when the sum decreases.
-
-                5) This algorithm's main task is finding the starting point of the subarray because after that
-                   we will definitely calculate maximum sum once even if we also iterate through extra elements later.
-
-                6) Because this algorithm is focused only on finding positive sum. 
-                   It doesn't work on arrays with all negative elements.
-                
-                7) If all array elements are non-positive numbers, then the solution is the largest negative number 
-                   (or an empty subarray, if it is permitted)
 */
 
-// Kadane's algorithm -> demands atleast 1 positive element in the array.
 class Solution
 {
 public:
-    int maxSubArray(vector<int> &nums)
+    // Optimal
+    void rotate(vector<vector<int>> &matrix)
     {
-        int n = nums.size(), sum = 0;
-        int maxSum = nums[0];
-        for (int i = 0; i < n; ++i)
+        int n = matrix.size();
+        for (int i = 0; i < n; i++)
         {
-            sum += nums[i];
-            maxSum = max(maxSum, sum);
-            debug(sum, maxSum);
-            if (sum < 0)
-                sum = 0;
-            debug(sum);
-        }
-        return maxSum;
-    }
-};
-
-// Brute force approach - O(n^2) -> TLE on leetcode
-class Solution2
-{
-public:
-    int maxSubArray(vector<int> &nums)
-    {
-        int n = nums.size();
-        int maxSum = INT_MIN;
-        for (int i = 0; i < n; ++i)
-        {
-            int sum = 0;
-            for (int j = i; j < n; ++j)
+            for (int j = i + 1; j < n; ++j)
             {
-                sum += nums[j];
-                debug(sum);
-                maxSum = max(sum, maxSum);
+                swap(matrix[i][j], matrix[j][i]);
             }
         }
-        return maxSum;
+        for (int i = 0; i < n; ++i)
+        {
+            reverse(all(matrix[i]));
+        }
+    }
+};
+class Solution1
+{
+public:
+    // Brute force
+    void rotate(vector<vector<int>> &matrix)
+    {
+        int n = matrix.size();
+        vvi rotated(n, vi(n, 0));
+
+        // Rotating the matrix
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < n; j++)
+            {
+                rotated[j][n - 1 - i] = matrix[i][j];
+            }
+        }
+        // Assigning the changed values to original matrix
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < n; j++)
+            {
+                matrix[i][j] = rotated[i][j];
+            }
+        }
+        for (int i = 0; i < n; ++i)
+        {
+            debcon(rotated[i]);
+        }
     }
 };
 void code()
 {
-    int t = 1;
-    cin >> t;
+    Solution s;
+    vvi arr;
+    int n;
+    cin >> n;
     cin.ignore();
-    while (t--)
+    for (int i = 0; i < n; ++i)
     {
-        Solution s;
-        vi arr;
-        inVec(arr);
-        int res = s.maxSubArray(arr); // store return value
-        cout << res << "\n";
+        vi v;
+        inVec(v);
+        arr.pb(v);
     }
+    for (int i = 0; i < n; ++i)
+    {
+        debcon(arr[i]);
+    }
+    s.rotate(arr);
 }
 int main()
 {
